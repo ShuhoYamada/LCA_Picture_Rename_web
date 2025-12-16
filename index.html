@@ -3,173 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Renamer Pro Web</title>
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- CSS -->
+    <title>Image Renamer for LCA</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Libraries -->
-    <script src="https://unpkg.com/read-excel-file@5.x/bundle/read-excel-file.min.js"></script>
+    <!-- 外部ライブラリ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 <body>
-    <div id="app">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-content">
-                <div class="logo">
-                     <span class="logo-icon">📸</span>
-                     <h1>Image Renamer Pro</h1>
-                </div>
-                <div class="status-indicators">
-                    <span id="status-material" class="status-badge pending">素材マスタ未読込</span>
-                    <span id="status-process" class="status-badge pending">加工マスタ未読込</span>
-                    <span id="status-images" class="status-badge pending">画像未選択</span>
-                </div>
-            </div>
+    <div class="container">
+        <!-- ヘッダー -->
+        <header class="header">
+            <h1>Image Renamer for LCA</h1>
+            <p class="subtitle">Web版 - サーバーレス画像リネームツール</p>
         </header>
 
-        <!-- Main Content -->
-        <main class="main-container">
-            <!-- Top Control Bar -->
-            <section class="control-bar card">
-                <div class="control-group">
-                    <label class="btn btn-secondary">
-                        📊 素材マスタ読込
-                        <input type="file" id="file-material" accept=".xlsx" hidden>
-                    </label>
-                    <label class="btn btn-warning">
-                        ⚙️ 加工マスタ読込
-                        <input type="file" id="file-process" accept=".xlsx" hidden>
-                    </label>
-                    <label class="btn btn-primary">
-                        📁 画像を選択
-                        <input type="file" id="file-images" accept="image/jpeg,image/png,image/heic" multiple hidden>
-                    </label>
-                </div>
-                <div class="control-group">
-                    <button id="btn-download" class="btn btn-success" disabled>
-                        ⬇️ Rename & Download ZIP
-                    </button>
-                    <button id="btn-reset" class="btn btn-danger-outline">
-                        Reset
-                    </button>
-                </div>
-            </section>
-
-            <div class="workspace">
-                <!-- Left Panel: Input Form -->
-                <section class="input-panel card">
-                    <h2 class="section-title">📝 ファイル情報入力</h2>
-                    
-                    <div class="scroll-container">
-                        <!-- Part Name -->
-                        <div class="input-group">
-                            <label>🔧 部品名 <span class="required">*</span></label>
-                            <input type="text" id="input-part-name" placeholder="部品の名前を入力" autocomplete="off">
-                            <small class="hint">部品名を入力してください</small>
-                        </div>
-
-                        <!-- Weight & Unit -->
-                        <div class="row">
-                            <div class="input-group flex-2">
-                                <label>⚖️ 重量 <span class="required">*</span></label>
-                                <input type="text" id="input-weight" placeholder="例: 10.5" autocomplete="off">
-                                <small class="hint">半角英数字のみ</small>
-                            </div>
-                            <div class="input-group flex-1">
-                                <label>📎 単位 <span class="required">*</span></label>
-                                <select id="input-unit">
-                                    <option value="kg">kg</option>
-                                    <option value="g">g</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Material Category -->
-                        <div class="input-group">
-                            <label>🧩 素材区分 <span class="required">*</span></label>
-                            <select id="input-material-category" disabled>
-                                <option value="">選択してください</option>
-                            </select>
-                            <small class="hint">Excelマスタから選択</small>
-                        </div>
-
-                        <!-- Material Name -->
-                        <div class="input-group">
-                            <label>📦 素材名 <span class="required">*</span></label>
-                            <select id="input-material" disabled>
-                                <option value="">区分を選択してください</option>
-                            </select>
-                            <small class="hint">素材区分を選択後に有効化</small>
-                        </div>
-
-                        <!-- Processing -->
-                        <div class="input-group">
-                            <label>⚙️ 加工方法 <span class="required">*</span></label>
-                            <select id="input-processing" disabled>
-                                <option value="">選択してください</option>
-                            </select>
-                            <small class="hint">Excelマスタから選択</small>
-                        </div>
-
-                        <!-- Photo Type -->
-                        <div class="input-group">
-                            <label>📷 写真区分 <span class="required">*</span></label>
-                            <select id="input-photo-type">
-                                <option value="P">部品写真(P) - 部品のみ</option>
-                                <option value="M">素材込み(M) - 素材も含む</option>
-                            </select>
-                        </div>
-
-                        <!-- Notes -->
-                        <div class="input-group">
-                            <label>📝 特記事項 <span class="required">*</span></label>
-                            <select id="input-notes">
-                                <option value="0">なし(0)</option>
-                                <option value="1">ある(1)</option>
-                            </select>
-                        </div>
-
-                        <!-- Apply Button -->
-                        <div class="action-area">
-                            <button id="btn-apply" class="btn btn-apply" disabled>
-                                ✨ 適用 & 次へ (Enter)
-                            </button>
-                        </div>
+        <!-- メイン領域 -->
+        <div class="main-content">
+            <!-- 上部：ステップ1とステップ2を横並び -->
+            <div class="top-row">
+                <!-- ステップ1: IDマスター読み込み -->
+                <section class="section compact-section">
+                    <h2>📊 ステップ1: IDマスター読み込み</h2>
+                    <div class="file-upload-area compact">
+                        <input type="file" id="excelFile" accept=".xlsx, .xls" class="file-input">
+                        <label for="excelFile" class="file-label compact-label">
+                            <span class="upload-icon small">📁</span>
+                            <span id="excelFileName">IDマスター.xlsxを選択</span>
+                        </label>
+                        <div id="excelStatus" class="status-message"></div>
                     </div>
                 </section>
 
-                <!-- Right Panel: Image Viewer -->
-                <section class="viewer-panel card">
-                    <div class="viewer-header">
-                        <span id="image-counter">No Images</span>
-                        <div class="navigation-controls">
-                            <button id="nav-prev" class="nav-btn" disabled>←</button>
-                            <button id="nav-next" class="nav-btn" disabled>→</button>
-                        </div>
-                    </div>
-                    
-                    <div class="image-container">
-                        <img id="preview-image" src="" alt="Preview" style="display: none;">
-                        <div id="placeholder-text" class="placeholder">
-                            <div class="placeholder-icon">🖼️</div>
-                            <p>画像フォルダを選択してください</p>
-                        </div>
-                    </div>
-
-                    <div class="file-info-bar">
-                        <span id="current-filename">-</span>
-                        <span id="rename-preview" class="rename-preview"></span>
+                <!-- ステップ2: 画像ファイル読み込み -->
+                <section class="section compact-section">
+                    <h2>🖼️ ステップ2: 画像ファイル読み込み</h2>
+                    <div class="file-upload-area compact">
+                        <input type="file" id="imageFiles" accept="image/*" multiple class="file-input">
+                        <label for="imageFiles" class="file-label compact-label">
+                            <span class="upload-icon small">📷</span>
+                            <span id="imageFileName">画像ファイルを複数選択</span>
+                        </label>
+                        <div id="imageStatus" class="status-message"></div>
                     </div>
                 </section>
             </div>
-        </main>
+
+            <!-- 中央：ステップ3と画像プレビューを横並び -->
+            <div class="middle-row">
+
+                <!-- ステップ3: 入力フォーム -->
+                <section class="section input-section" id="inputSection">
+                    <h2>📝 ステップ3: ファイル情報入力</h2>
+                    
+                    <div class="form-group">
+                        <label for="numberInput">🔢 番号</label>
+                        <input type="number" id="numberInput" class="form-control" placeholder="自動設定" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="implementerSelect">👤 実施者 (必須)</label>
+                        <select id="implementerSelect" class="form-control" required disabled>
+                            <option value="">選択してください</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="partNameInput">🔧 部品名 (必須)</label>
+                        <input type="text" id="partNameInput" class="form-control" placeholder="部品名を入力" required disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weightInput">⚖️ 重量 (必須)</label>
+                        <input type="text" id="weightInput" class="form-control" placeholder="半角英数字で入力" required disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unitSelect">📎 単位</label>
+                        <select id="unitSelect" class="form-control" disabled>
+                            <option value="kg">kg</option>
+                            <option value="g">g</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="materialCategorySelect">🧩 素材区分 (必須)</label>
+                        <select id="materialCategorySelect" class="form-control" required disabled>
+                            <option value="">選択してください</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="materialSelect">📦 素材名 (必須)</label>
+                        <select id="materialSelect" class="form-control" disabled required>
+                            <option value="">素材区分を選択してください</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="processingSelect">⚙️ 加工方法 (必須)</label>
+                        <select id="processingSelect" class="form-control" required disabled>
+                            <option value="">選択してください</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="photoTypeSelect">📷 写真区分 (必須)</label>
+                        <select id="photoTypeSelect" class="form-control" disabled>
+                            <option value="P">部品写真(P) - 部品のみの写真</option>
+                            <option value="M">素材込み(M) - 素材も含む写真</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notesSelect">📝 特記事項 (必須)</label>
+                        <select id="notesSelect" class="form-control" disabled>
+                            <option value="0">なし(0) - 特記事項なし</option>
+                            <option value="1">ある(1) - 特記事項あり</option>
+                        </select>
+                    </div>
+
+                    <!-- ナビゲーションボタン -->
+                    <div class="button-group">
+                        <button id="prevButton" class="btn btn-secondary" disabled>◀ 前へ</button>
+                        <button id="applyButton" class="btn btn-primary" disabled>✨ 適用 & 次へ</button>
+                    </div>
+
+                    <!-- プレビュー -->
+                    <div class="preview-section">
+                        <h3>プレビュー</h3>
+                        <div id="filenamePreview" class="filename-preview">ファイル名がここに表示されます</div>
+                    </div>
+
+                    <!-- ダウンロードボタン -->
+                    <div class="download-section">
+                        <button id="downloadButton" class="btn btn-success" disabled>💾 リネーム済みファイルをダウンロード (ZIP)</button>
+                        <div id="downloadStatus" class="status-message"></div>
+                    </div>
+                </section>
+
+                <!-- 画像プレビュー -->
+                <section class="section image-preview-section">
+                    <h2>🖼️ 画像プレビュー</h2>
+                    <div class="image-preview-container">
+                        <div id="imagePreview" class="image-preview">
+                            <div class="placeholder">
+                                <span class="placeholder-icon">📷</span>
+                                <p>画像を選択すると<br>ここに表示されます</p>
+                            </div>
+                        </div>
+                        <div id="imageInfo" class="image-info"></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 下部：処理済みファイルリスト -->
+            <div class="bottom-row">
+                <section class="section">
+                    <h2>✅ 処理済みファイル</h2>
+                    <div id="processedList" class="processed-list">
+                        <p class="placeholder-text">まだ処理されたファイルはありません</p>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- フッター -->
+        <footer class="footer">
+            <p>© 2025 Image Renamer for LCA - Developed by Shuho Yamada</p>
+        </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

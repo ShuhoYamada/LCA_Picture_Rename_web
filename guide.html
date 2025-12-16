@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使い方ガイド - Image Renamer Pro Web版</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            line-height: 1.8;
+            background: #f8fafc;
+        }
+        h1 {
+            color: #3b82f6;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #1f2937;
+            margin-top: 30px;
+        }
+        .step {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .step h3 {
+            color: #3b82f6;
+            margin-top: 0;
+        }
+        code {
+            background: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        .note {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+        .btn {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+        .btn:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>📸 Image Renamer Pro - Web版 使い方ガイド</h1>
+    
+    <a href="index.html" class="btn">🚀 アプリを起動する</a>
+    
+    <div class="note">
+        <strong>💡 ポイント:</strong> このアプリは完全にブラウザ内で動作し、インターネット接続やサーバーは不要です。すべてのデータはあなたのコンピューター内で処理されます。
+    </div>
+
+    <h2>📋 準備するもの</h2>
+    <ul>
+        <li>IDマスター.xlsx（素材、加工方法、実施者の情報を含む）</li>
+        <li>リネームしたい画像ファイル（複数可）</li>
+        <li>モダンなWebブラウザ（Chrome、Firefox、Safari、Edgeなど）</li>
+    </ul>
+
+    <h2>🎯 手順</h2>
+
+    <div class="step">
+        <h3>ステップ1: IDマスターを準備</h3>
+        <p>ExcelファイルにIDマスターを作成します。以下の3つのシートが必要です：</p>
+        
+        <h4>1. 素材シート（シート名に「素材」を含む）</h4>
+        <table>
+            <tr>
+                <th>素材名</th>
+                <th>素材ID</th>
+                <th>素材区分</th>
+            </tr>
+            <tr>
+                <td>鉄</td>
+                <td>M001</td>
+                <td>金属</td>
+            </tr>
+            <tr>
+                <td>アルミニウム</td>
+                <td>M002</td>
+                <td>金属</td>
+            </tr>
+            <tr>
+                <td>プラスチック</td>
+                <td>M003</td>
+                <td>樹脂</td>
+            </tr>
+        </table>
+
+        <h4>2. 加工シート（シート名に「加工」を含む）</h4>
+        <table>
+            <tr>
+                <th>加工方法名</th>
+                <th>加工ID</th>
+            </tr>
+            <tr>
+                <td>切削</td>
+                <td>P001</td>
+            </tr>
+            <tr>
+                <td>溶接</td>
+                <td>P002</td>
+            </tr>
+            <tr>
+                <td>プレス</td>
+                <td>P003</td>
+            </tr>
+        </table>
+
+        <h4>3. 実施者シート（シート名に「実施者」を含む）</h4>
+        <table>
+            <tr>
+                <th>実施者名（または名前）</th>
+                <th>実施者ID（またはID）</th>
+            </tr>
+            <tr>
+                <td>山田太郎</td>
+                <td>U001</td>
+            </tr>
+            <tr>
+                <td>佐藤花子</td>
+                <td>U002</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="step">
+        <h3>ステップ2: アプリを起動</h3>
+        <ol>
+            <li><code>index.html</code> をダブルクリックしてブラウザで開く</li>
+            <li>美しいインターフェースが表示されます</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h3>ステップ3: IDマスターを読み込み</h3>
+        <ol>
+            <li>「IDマスター.xlsxを選択」エリアをクリック</li>
+            <li>準備したExcelファイルを選択</li>
+            <li>✅ 成功メッセージが表示されることを確認</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h3>ステップ4: 画像ファイルを読み込み</h3>
+        <ol>
+            <li>「画像ファイルを複数選択」エリアをクリック</li>
+            <li>リネームしたい画像を複数選択（Ctrl/Cmdキーを押しながらクリック）</li>
+            <li>✅ 成功メッセージと最初の画像のプレビューが表示されます</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h3>ステップ5: 各画像の情報を入力</h3>
+        <p>入力フォームが表示されるので、以下の情報を入力します：</p>
+        <ul>
+            <li><strong>番号</strong>: 自動設定されます（編集可能）</li>
+            <li><strong>実施者</strong>: プルダウンから選択 ⭐必須</li>
+            <li><strong>部品名</strong>: テキスト入力 ⭐必須</li>
+            <li><strong>重量</strong>: 数値入力 ⭐必須</li>
+            <li><strong>単位</strong>: kg または g を選択</li>
+            <li><strong>素材区分</strong>: プルダウンから選択 ⭐必須</li>
+            <li><strong>素材名</strong>: 素材区分を選択すると表示 ⭐必須</li>
+            <li><strong>加工方法</strong>: プルダウンから選択 ⭐必須</li>
+            <li><strong>写真区分</strong>: P（部品のみ）または M（素材込み）</li>
+            <li><strong>特記事項</strong>: 0（なし）または 1（あり）</li>
+        </ul>
+        <p>入力すると、下部にファイル名のプレビューが表示されます。</p>
+    </div>
+
+    <div class="step">
+        <h3>ステップ6: 適用して次へ</h3>
+        <ol>
+            <li>「✨ 適用 & 次へ」ボタンをクリック</li>
+            <li>自動的に次の画像に移動します</li>
+            <li>右側の「処理済みファイル」リストに追加されます</li>
+            <li>必要に応じて「◀ 前へ」で前の画像に戻れます</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h3>ステップ7: ZIPファイルをダウンロード</h3>
+        <ol>
+            <li>すべての画像を処理したら、画面下部のボタンが有効になります</li>
+            <li>「💾 リネーム済みファイルをダウンロード」ボタンをクリック</li>
+            <li>ZIPファイルがダウンロードされます</li>
+            <li>ZIPを解凍すると、リネームされた画像が入っています</li>
+        </ol>
+    </div>
+
+    <h2>📝 ファイル名の形式</h2>
+    <div class="note">
+        生成されるファイル名は以下の形式です：<br>
+        <code>番号_部品名_重量_単位_素材ID_加工ID_実施者ID_写真区分_特記事項.拡張子</code>
+    </div>
+
+    <h4>例：</h4>
+    <ul>
+        <li><code>1_ボルト_0.5_kg_M001_P001_U001_P_0.jpg</code></li>
+        <li><code>1_ナット_0.3_kg_M002_P002_U001_M_1.jpg</code></li>
+        <li><code>2_ワッシャー_0.1_kg_M001_P001_U002_P_0.png</code></li>
+    </ul>
+
+    <h2>⚠️ 注意事項</h2>
+    <div class="warning">
+        <ul>
+            <li>番号は1,1,2,2,3,3... のようにペアで自動設定されます</li>
+            <li>ブラウザを閉じると作業中のデータは失われます</li>
+            <li>大量の画像（100枚以上）を処理する場合は時間がかかることがあります</li>
+            <li>画像サイズが大きい場合、ブラウザのメモリを多く消費します</li>
+        </ul>
+    </div>
+
+    <h2>💡 便利な機能</h2>
+    <ul>
+        <li><strong>リアルタイムプレビュー</strong>: 入力すると即座にファイル名が確認できます</li>
+        <li><strong>自然順序ソート</strong>: 画像1, 画像2, ... 画像10 のように正しく並びます</li>
+        <li><strong>処理済みリスト</strong>: どのファイルを処理したか一目で確認</li>
+        <li><strong>番号の自動設定</strong>: ペアロジックで自動的に番号を設定</li>
+    </ul>
+
+    <h2>🔧 トラブルシューティング</h2>
+    
+    <h3>Q: Excelファイルが読み込めない</h3>
+    <p>A: 以下を確認してください：</p>
+    <ul>
+        <li>ファイル形式が .xlsx または .xls</li>
+        <li>シート名に「素材」「加工」「実施者」の文字が含まれている</li>
+        <li>必要な列（素材名、素材ID、素材区分など）が存在する</li>
+    </ul>
+
+    <h3>Q: 画像が表示されない</h3>
+    <p>A: 以下を確認してください：</p>
+    <ul>
+        <li>対応する画像形式（JPG、PNG、HEICなど）を使用</li>
+        <li>ファイルサイズが適切（1枚あたり10MB以下推奨）</li>
+        <li>ブラウザが画像形式に対応している</li>
+    </ul>
+
+    <h3>Q: ダウンロードができない</h3>
+    <p>A: 以下を確認してください：</p>
+    <ul>
+        <li>ブラウザのポップアップブロックを無効化</li>
+        <li>ブラウザのダウンロード設定を確認</li>
+        <li>十分なディスク容量がある</li>
+    </ul>
+
+    <h2>🌐 推奨ブラウザ</h2>
+    <ul>
+        <li>Google Chrome 90+</li>
+        <li>Mozilla Firefox 88+</li>
+        <li>Safari 14+</li>
+        <li>Microsoft Edge 90+</li>
+    </ul>
+
+    <div class="note">
+        <strong>🎉 準備完了！</strong><br>
+        これで Image Renamer Pro Web版を使う準備ができました。<br>
+        楽しくリネーム作業を行ってください！
+    </div>
+
+    <a href="index.html" class="btn">🚀 アプリを起動する</a>
+
+    <footer style="margin-top: 60px; text-align: center; color: #6b7280; padding: 20px; border-top: 1px solid #e5e7eb;">
+        <p>© 2024 Image Renamer Pro - Made with ❤️ | Web版 v1.0.0</p>
+    </footer>
+</body>
+</html>
