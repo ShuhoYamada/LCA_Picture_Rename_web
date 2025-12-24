@@ -9,13 +9,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- HEIC/HEIF デコーダ（ブラウザ内変換用） -->
+    <script src="https://unpkg.com/heic2any@0.0.4/dist/heic2any.min.js"></script>
 </head>
 <body>
     <div class="container">
         <!-- ヘッダー -->
         <header class="header">
             <h1>Image Renamer for LCA</h1>
-            <p class="subtitle">Web版 - サーバーレス画像リネームツール</p>
+            <p class="subtitle">画像リネーム(HEICファイルを利用する場合はSafari推奨)</p>
         </header>
 
         <!-- メイン領域 -->
@@ -39,7 +41,7 @@
                 <section class="section compact-section">
                     <h2>🖼️ ステップ2: 画像ファイル読み込み</h2>
                     <div class="file-upload-area compact">
-                        <input type="file" id="imageFiles" accept="image/*" multiple class="file-input">
+                        <input type="file" id="imageFiles" accept="image/*,.heic,.heif" multiple class="file-input">
                         <label for="imageFiles" class="file-label compact-label">
                             <span class="upload-icon small">📷</span>
                             <span id="imageFileName">画像ファイルを複数選択</span>

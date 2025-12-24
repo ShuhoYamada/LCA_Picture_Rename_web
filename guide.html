@@ -95,8 +95,54 @@
     <ul>
         <li>IDマスター.xlsx（素材、加工方法、実施者の情報を含む）</li>
         <li>リネームしたい画像ファイル（複数可）</li>
-        <li>モダンなWebブラウザ（Chrome、Firefox、Safari、Edgeなど）</li>
+        <li>モダンなWebブラウザ（Safari推奨、Chrome、Firefox、Edgeも対応）</li>
     </ul>
+
+    <h2>🖼️ 対応画像形式</h2>
+    <table>
+        <tr>
+            <th>形式</th>
+            <th>拡張子</th>
+            <th>プレビュー</th>
+            <th>備考</th>
+        </tr>
+        <tr>
+            <td>JPEG</td>
+            <td>.jpg, .jpeg</td>
+            <td>✅ 全ブラウザ</td>
+            <td>最も一般的な形式</td>
+        </tr>
+        <tr>
+            <td>PNG</td>
+            <td>.png</td>
+            <td>✅ 全ブラウザ</td>
+            <td>透過対応</td>
+        </tr>
+        <tr>
+            <td>GIF</td>
+            <td>.gif</td>
+            <td>✅ 全ブラウザ</td>
+            <td>アニメーション対応</td>
+        </tr>
+        <tr>
+            <td>WebP</td>
+            <td>.webp</td>
+            <td>✅ 全ブラウザ</td>
+            <td>高圧縮形式</td>
+        </tr>
+        <tr>
+            <td>HEIC/HEIF</td>
+            <td>.heic, .heif</td>
+            <td>⚠️ Safariのみ</td>
+            <td>iPhoneの標準形式</td>
+        </tr>
+        <tr>
+            <td>BMP</td>
+            <td>.bmp</td>
+            <td>✅ 全ブラウザ</td>
+            <td>非圧縮形式</td>
+        </tr>
+    </table>
 
     <h2>🎯 手順</h2>
 
@@ -273,10 +319,43 @@
     <h3>Q: 画像が表示されない</h3>
     <p>A: 以下を確認してください：</p>
     <ul>
-        <li>対応する画像形式（JPG、PNG、HEICなど）を使用</li>
+        <li>対応する画像形式（JPG、PNG、GIF、WebP、HEICなど）を使用</li>
         <li>ファイルサイズが適切（1枚あたり10MB以下推奨）</li>
         <li>ブラウザが画像形式に対応している</li>
     </ul>
+
+    <h3>Q: HEICファイルのプレビューについて</h3>
+    <div class="warning">
+        <strong>⚠️ HEIC画像のブラウザ対応状況</strong>
+        <table>
+            <tr>
+                <th>ブラウザ</th>
+                <th>HEICプレビュー</th>
+                <th>リネーム・ZIP保存</th>
+            </tr>
+            <tr>
+                <td>Safari (macOS)</td>
+                <td>✅ 対応</td>
+                <td>✅ 対応</td>
+            </tr>
+            <tr>
+                <td>Chrome</td>
+                <td>❌ 非対応（HEVCライセンスの制限）</td>
+                <td>✅ 対応</td>
+            </tr>
+            <tr>
+                <td>Firefox</td>
+                <td>❌ 非対応</td>
+                <td>✅ 対応</td>
+            </tr>
+            <tr>
+                <td>Edge</td>
+                <td>❌ 非対応</td>
+                <td>✅ 対応</td>
+            </tr>
+        </table>
+        <p><strong>💡 ヒント:</strong> HEICファイルを使用する場合は<strong>Safari</strong>の利用を推奨します。Chrome等でもリネーム・ZIP保存は正常に動作しますが、プレビューは表示されません。</p>
+    </div>
 
     <h3>Q: ダウンロードができない</h3>
     <p>A: 以下を確認してください：</p>
@@ -287,12 +366,33 @@
     </ul>
 
     <h2>🌐 推奨ブラウザ</h2>
-    <ul>
-        <li>Google Chrome 90+</li>
-        <li>Mozilla Firefox 88+</li>
-        <li>Safari 14+</li>
-        <li>Microsoft Edge 90+</li>
-    </ul>
+    <table>
+        <tr>
+            <th>ブラウザ</th>
+            <th>バージョン</th>
+            <th>備考</th>
+        </tr>
+        <tr>
+            <td>Safari</td>
+            <td>14+</td>
+            <td>⭐ HEIC対応のため推奨</td>
+        </tr>
+        <tr>
+            <td>Google Chrome</td>
+            <td>90+</td>
+            <td>HEICプレビュー不可</td>
+        </tr>
+        <tr>
+            <td>Mozilla Firefox</td>
+            <td>88+</td>
+            <td>HEICプレビュー不可</td>
+        </tr>
+        <tr>
+            <td>Microsoft Edge</td>
+            <td>90+</td>
+            <td>HEICプレビュー不可</td>
+        </tr>
+    </table>
 
     <div class="note">
         <strong>🎉 準備完了！</strong><br>
@@ -303,7 +403,7 @@
     <a href="index.html" class="btn">🚀 アプリを起動する</a>
 
     <footer style="margin-top: 60px; text-align: center; color: #6b7280; padding: 20px; border-top: 1px solid #e5e7eb;">
-        <p>© 2024 Image Renamer Pro - Made with ❤️ | Web版 v1.0.0</p>
+        <p>© 2025 Image Renamer for LCA - Made with ❤️ | Web版 v1.1.0</p>
     </footer>
 </body>
 </html>

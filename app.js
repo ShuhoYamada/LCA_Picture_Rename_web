@@ -18,8 +18,129 @@ const AppState = {
     processedFiles: new Map(), // originalName -> { newName, blob }
     
     // UI状態
-    isReady: false
+    isReady: false,
+    currentPreviewUrl: null // URL.createObjectURL の解放用
 };
+
+function extractJpegBlob(result) {
+    if (result instanceof Blob) return result;
+    if (Array.isArray(result)) {
+        const first = result.find((x) => x instanceof Blob) ?? result[0];
+        if (first instanceof Blob) return first;
+        return new Blob([first], { type: 'image/jpeg' });
+    }
+    return new Blob([result], { type: 'image/jpeg' });
+}
+
+async function ensureHeic2Any() {
+    if (typeof window.heic2any === 'function') return true;
+    const cdnList = [
+        'https://unpkg.com/heic2any@0.0.4/dist/heic2any.min.js',
+        'https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js'
+    ];
+    for (const src of cdnList) {
+        try {
+            await new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = src;
+                s.onload = resolve;
+                s.onerror = reject;
+                document.head.appendChild(s);
+            });
+            if (typeof window.heic2any === 'function') return true;
+        } catch (e) {
+            console.warn('heic2any load failed from', src, e);
+        }
+    }
+    return false;
+}
+
+/**
+ * libheif-jsを動的にロード
+ */
+let libheifLoadPromise = null;
+async function ensureLibheif() {
+    if (window.libheif) return true;
+    if (libheifLoadPromise) return libheifLoadPromise;
+    
+    const cdnList = [
+        'https://unpkg.com/libheif-js@1.17.1/libheif-bundle/libheif-bundle.js',
+        'https://cdn.jsdelivr.net/npm/libheif-js@1.17.1/libheif-bundle/libheif-bundle.js',
+        'https://unpkg.com/libheif-js@1.15.1/libheif-bundle/libheif-bundle.js'
+    ];
+    
+    libheifLoadPromise = (async () => {
+        for (const src of cdnList) {
+            try {
+                await new Promise((resolve, reject) => {
+                    const s = document.createElement('script');
+                    s.src = src;
+                    s.onload = () => setTimeout(resolve, 100); // Give time for global to be set
+                    s.onerror = reject;
+                    document.head.appendChild(s);
+                });
+                if (window.libheif) {
+                    console.log('libheif loaded from', src);
+                    return true;
+                }
+            } catch (e) {
+                console.warn('libheif load failed from', src, e);
+            }
+        }
+        return false;
+    })();
+    
+    return libheifLoadPromise;
+}
+
+/**
+ * libheif-jsを使用してHEICをJPEGに変換
+ */
+async function decodeHeicWithLibheif(file) {
+    if (!(await ensureLibheif())) {
+        console.warn('libheif-js could not be loaded');
+        return null;
+    }
+    
+    const libheif = window.libheif;
+    
+    try {
+        const buffer = await file.arrayBuffer();
+        const decoder = new libheif.HeifDecoder();
+        const data = decoder.decode(new Uint8Array(buffer));
+        
+        if (!data || data.length === 0) {
+            throw new Error('libheif: No image data found');
+        }
+        
+        const image = data[0];
+        const width = image.get_width();
+        const height = image.get_height();
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        const imageData = ctx.createImageData(width, height);
+        
+        await new Promise((resolve, reject) => {
+            image.display(imageData, (displayData) => {
+                if (!displayData) {
+                    reject(new Error('libheif: display failed'));
+                    return;
+                }
+                resolve(displayData);
+            });
+        });
+        
+        ctx.putImageData(imageData, 0, 0);
+        return new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+    } catch (e) {
+        console.error('libheif decode error:', e);
+        throw e;
+    }
+}
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
@@ -290,21 +411,104 @@ function naturalSort(a, b) {
 /**
  * 現在の画像を表示
  */
-function displayCurrentImage() {
+async function displayCurrentImage() {
     const file = AppState.imageFiles[AppState.currentIndex];
     if (!file) return;
-    
+
+    const preview = document.getElementById('imagePreview');
+    const info = document.getElementById('imageInfo');
+
+    // 既存のObject URLを解放
+    if (AppState.currentPreviewUrl) {
+        URL.revokeObjectURL(AppState.currentPreviewUrl);
+        AppState.currentPreviewUrl = null;
+    }
+
+    // HEIC/HEIFはブラウザで表示できないことが多いため、JPEGへ変換して表示
+    if (isHeicFile(file)) {
+        info.textContent = `画像 ${AppState.currentIndex + 1} / ${AppState.imageFiles.length}: ${file.name}（HEICプレビュー変換中…）`;
+        // 1) Safari等でのネイティブデコード: createImageBitmap
+        try {
+            if (typeof createImageBitmap === 'function') {
+                const bitmap = await createImageBitmap(file);
+                const canvas = document.createElement('canvas');
+                canvas.width = bitmap.width;
+                canvas.height = bitmap.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(bitmap, 0, 0);
+                const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+                if (blob) {
+                    const url = URL.createObjectURL(blob);
+                    AppState.currentPreviewUrl = url;
+                    preview.innerHTML = `<img src="${url}" alt="画像プレビュー">`;
+                    info.textContent = `画像 ${AppState.currentIndex + 1} / ${AppState.imageFiles.length}: ${file.name}（HEIC→JPEGで表示）`;
+                    updateFilenamePreview();
+                    return;
+                }
+            }
+        } catch (e) {
+            // createImageBitmap失敗時は次の手段へ
+            console.warn('createImageBitmapでのHEICデコードに失敗:', e);
+        }
+
+        // 2) ライブラリ heic2any による変換
+        if (!(await ensureHeic2Any())) {
+            // ライブラリ読み込みに失敗
+        } else {
+            try {
+                const result = await window.heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
+                const blob = extractJpegBlob(result);
+                const url = URL.createObjectURL(blob);
+                AppState.currentPreviewUrl = url;
+                preview.innerHTML = `<img src="${url}" alt="画像プレビュー">`;
+                info.textContent = `画像 ${AppState.currentIndex + 1} / ${AppState.imageFiles.length}: ${file.name}（HEIC→JPEGで表示）`;
+                updateFilenamePreview();
+                return;
+            } catch (error) {
+                console.error('heic2anyでのHEICプレビュー変換エラー:', error);
+            }
+        }
+
+        // 3) libheif-js による変換（heic2anyが失敗した場合のフォールバック）
+        try {
+            const jpegBlob = await decodeHeicWithLibheif(file);
+            if (jpegBlob) {
+                const url = URL.createObjectURL(jpegBlob);
+                AppState.currentPreviewUrl = url;
+                preview.innerHTML = `<img src="${url}" alt="画像プレビュー">`;
+                info.textContent = `画像 ${AppState.currentIndex + 1} / ${AppState.imageFiles.length}: ${file.name}（HEIC→JPEGで表示）`;
+                updateFilenamePreview();
+                return;
+            }
+        } catch (error) {
+            console.error('libheif-jsでのHEICプレビュー変換エラー:', error);
+        }
+
+        // 4) すべて失敗時
+        preview.innerHTML = `<div class="placeholder"><span class="placeholder-icon">⚠️</span><p>HEICプレビューに失敗しました<br><small>このHEICファイルはHEVCコーデックを使用しており、<br>Chromeではプレビューできません。<br>リネーム・ ZIP保存は可能です。</small></p></div>`;
+        info.textContent = `画像 ${AppState.currentIndex + 1} / ${AppState.imageFiles.length}: ${file.name}（HEICプレビュー不可 - Safariでは表示可能）`;
+        updateFilenamePreview();
+        return;
+    }
+
+    // 通常画像はFileReaderでDataURL表示
     const reader = new FileReader();
     reader.onload = (e) => {
-        const preview = document.getElementById('imagePreview');
         preview.innerHTML = `<img src="${e.target.result}" alt="画像プレビュー">`;
-        
-        const info = document.getElementById('imageInfo');
         info.textContent = `画像 ${AppState.currentIndex + 1} / ${AppState.imageFiles.length}: ${file.name}`;
     };
-    
     reader.readAsDataURL(file);
     updateFilenamePreview();
+}
+
+/**
+ * HEIC/HEIFファイル判定（MIMEタイプまたは拡張子）
+ */
+function isHeicFile(file) {
+    const type = (file.type || '').toLowerCase();
+    if (type === 'image/heic' || type === 'image/heif') return true;
+    const name = (file.name || '').toLowerCase();
+    return /\.(heic|heif)$/.test(name);
 }
 
 /**
