@@ -147,6 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
 });
 
+// デフォルトのGoogleスプレッドシートURL
+const DEFAULT_SPREADSHEET_ID = '1GbTaV5j83Dgt-kgPFLjYaffSqOiZCrj9';
+
 function initializeApp() {
     // イベントリスナー設定
     document.getElementById('excelFile').addEventListener('change', handleExcelUpload);
@@ -166,6 +169,39 @@ function initializeApp() {
             element.addEventListener('change', updateFilenamePreview);
         }
     });
+    
+    // デフォルトのIDマスター（Master/10_IDマスター.xlsx）を読み込む
+    loadDefaultSpreadsheet();
+}
+
+/**
+ * デフォルトのIDマスター（Master/10_IDマスター.xlsx）を読み込む
+ */
+async function loadDefaultSpreadsheet() {
+    try {
+        updateStatus('excelStatus', 'デフォルトのIDマスターを読み込み中...', 'info');
+        document.getElementById('excelFileName').textContent = 'Master/10_IDマスター.xlsx を読み込み中...';
+        
+        const response = await fetch('Master/10_IDマスター.xlsx');
+        if (!response.ok) {
+            throw new Error(`ファイルの取得に失敗しました: ${response.status}`);
+        }
+        
+        const arrayBuffer = await response.arrayBuffer();
+        const data = new Uint8Array(arrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        
+        parseExcelData(workbook);
+        
+        document.getElementById('excelFileName').textContent = 'デフォルトIDマスター（Master/10_IDマスター.xlsx）';
+        updateStatus('excelStatus', `✅ デフォルトIDマスター読み込み完了: 素材${Object.keys(AppState.materials).length}件、加工方法${Object.keys(AppState.processingMethods).length}件、実施者${Object.keys(AppState.implementers).length}件`, 'success');
+        
+        checkReadyState();
+    } catch (error) {
+        console.error('デフォルトIDマスターの読み込みに失敗:', error);
+        updateStatus('excelStatus', `⚠️ デフォルトIDマスターの読み込みに失敗しました。ローカルファイルを選択してください。`, 'warning');
+        document.getElementById('excelFileName').textContent = 'IDマスター.xlsxを選択';
+    }
 }
 
 /**

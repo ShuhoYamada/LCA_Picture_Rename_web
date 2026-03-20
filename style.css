@@ -114,7 +114,14 @@ body {
 
 .compact-section h2 {
     font-size: 1.1rem;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+}
+
+.section-note {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    font-style: italic;
 }
 
 /* 画像プレビューセクション */
