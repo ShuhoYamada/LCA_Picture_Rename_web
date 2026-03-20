@@ -182,7 +182,7 @@ async function loadDefaultSpreadsheet() {
         updateStatus('excelStatus', 'デフォルトのIDマスターを読み込み中...', 'info');
         document.getElementById('excelFileName').textContent = 'Master/10_IDマスター.xlsx を読み込み中...';
         
-        const response = await fetch('Master/10_IDマスター.xlsx');
+        const response = await fetch(encodeURI('Master/10_IDマスター.xlsx'));
         if (!response.ok) {
             throw new Error(`ファイルの取得に失敗しました: ${response.status}`);
         }
